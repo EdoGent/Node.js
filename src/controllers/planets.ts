@@ -10,7 +10,8 @@ const setupDB = async () => {
 
     CREATE TABLE planets (
       id SERIAL NOT NULL PRIMARY KEY,
-      name TEXT NOT NULL
+      name TEXT NOT NULL,
+      image TEXT
     );
   `)
 
@@ -68,4 +69,16 @@ const deleteById =async (req: Request, res: Response) => {
   res.status(200).json({ msg: 'The planet was deleted' });
 }
 
-export {getAll, getOneById, create, updateById, deleteById}
+const createImage = async (req: Request, res: Response) => {
+  const {id} = req.params;
+  const fileName = req.file?.path;
+
+  if (fileName) {
+    await db.none(`UPDATE planets SET image=$2 WHERE id=$1`, [id, fileName]);
+    res.status(201).json({ msg: 'Planet image uploaded successfully' })
+  } else {
+    res.status(400).json({ msg: 'Planet image failed to upload' })
+  }
+}
+
+export {getAll, getOneById, create, updateById, deleteById, createImage}
