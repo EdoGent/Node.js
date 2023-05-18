@@ -9,8 +9,10 @@ import {
   deleteById,
   createImage
 } from './controllers/planets.js';
-import { login } from './controllers/users.js';
+import { login, signup, logout } from './controllers/users.js';
+import authorize from "./authorize.js";
 import multer from 'multer';
+import "./passport.js";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -40,7 +42,11 @@ app.delete('/api/planets/:id', deleteById);
 
 app.post('/api/planets/:id/image', upload.single('image'), createImage);
 
-app.post('/api/users/login', login)
+app.post('/api/users/signup', signup);
+
+app.post('/api/users/login', login);
+
+app.get('/api/users/logout', /*authorize,*/ logout);
 
 app.listen(port, () => {
   console.log(`Example app listening on port: http://localhost:${port}`);

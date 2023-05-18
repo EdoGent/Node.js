@@ -36,4 +36,22 @@ const login = async (req: Request, res:Response) => {
     }
 };
 
-export { login };
+const signup = async (req: Request, res:Response) => {
+    const {username, password} = req.body;
+    const user = await db.oneOrNone(`SELECT * FROM users WHERE username=$1`, username);
+
+    if (user) {
+        res.status(409).json({ msg:'Username already in use' });
+    } else {
+        const { id } = await db.one(`INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id`, [username, password]);
+        res.status(201).json({ id, msg:'SIgnup successful. Now you can log in.' });
+    }
+};
+
+const logout = async (req: Request, res:Response) => {
+    const user: any = req.user;
+    await db.none(`UPDATE users SET token=$2 WHERE id=$2`, [user?.id, null]);
+    res.status(200).json({ msg:"Logout successful" });
+};
+
+export { login, signup, logout };
