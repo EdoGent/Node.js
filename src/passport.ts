@@ -13,7 +13,7 @@ passport.use(
             jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
         }, 
         async (payload: any, done: any) => {
-            const user = db.one(`SELECT * FROM users WHERE id=$1`, payload.id)
+            const user = await db.one(`SELECT * FROM users WHERE id=$1`, payload.id)
             console.log(user);
 
             try {
